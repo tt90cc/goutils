@@ -2,8 +2,8 @@ package uniqueid
 
 import (
 	"fmt"
+	"github.com/tt90cc/utils"
 	"time"
-	"tt90cc/utils"
 )
 
 // 生成sn单号

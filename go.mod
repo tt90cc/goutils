@@ -1,4 +1,4 @@
-module tt90cc/utils
+module github.com/tt90cc/utils
 
 go 1.18
 

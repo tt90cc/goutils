@@ -2,9 +2,9 @@ package response
 
 import (
 	"github.com/pkg/errors"
+	"github.com/tt90cc/utils/errorx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 	"net/http"
-	"tt90cc/utils/errorx"
 )
 
 type Body struct {
