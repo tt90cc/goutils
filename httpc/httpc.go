@@ -62,7 +62,7 @@ func BaseResponse(ctx context.Context, url string, data interface{}, header ...h
 	var j map[string]interface{}
 	err = json.Unmarshal(b, &j)
 
-	logger.Infof("url:%s respData:%+v", url, j)
+	logger.Infof("url:%s respData:%s", url, string(b))
 
 	return j, err
 }
