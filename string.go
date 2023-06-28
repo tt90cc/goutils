@@ -1,7 +1,9 @@
 package utils
 
 import (
+	"bytes"
 	"crypto/md5"
+	"encoding/json"
 	"fmt"
 	"github.com/shopspring/decimal"
 	"io"
@@ -70,4 +72,20 @@ func Md5ByString(str string) string {
 
 func Md5ByBytes(b []byte) string {
 	return fmt.Sprintf("%x", md5.Sum(b))
+}
+
+func JSONMarshal(t interface{}) ([]byte, error) {
+	buffer := &bytes.Buffer{}
+	encoder := json.NewEncoder(buffer)
+	encoder.SetEscapeHTML(false)
+	err := encoder.Encode(t)
+	return buffer.Bytes(), err
+}
+
+func ToJSON(t interface{}) string {
+	b, err := JSONMarshal(t)
+	if err != nil {
+		return ""
+	}
+	return string(b)
 }
