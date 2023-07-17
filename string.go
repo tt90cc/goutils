@@ -82,10 +82,15 @@ func JSONMarshal(t interface{}) ([]byte, error) {
 	return buffer.Bytes(), err
 }
 
-func ToJSON(t interface{}) string {
-	b, err := JSONMarshal(t)
-	if err != nil {
-		return ""
+func ToJSON(v interface{}) string {
+	switch v.(type) {
+	case string:
+		return v.(string)
+	default:
+		b, err := JSONMarshal(v)
+		if err != nil {
+			return ""
+		}
+		return string(b)
 	}
-	return string(b)
 }

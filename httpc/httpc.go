@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/pkg/errors"
 	"github.com/spf13/cast"
 	"github.com/tt90cc/utils/errorx"
@@ -12,7 +13,54 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"sort"
+	"strings"
 )
+
+func DeleteEmptyValue(src map[string]interface{}) map[string]interface{} {
+	resultMap := make(map[string]interface{})
+	for key, value := range src {
+		if key != "" && value != nil && value != "" {
+			resultMap[key] = value
+		}
+	}
+	return resultMap
+}
+
+func FormatSignSrcText(method string, paramMap map[string]interface{}) (string, error) {
+	validParamMap := DeleteEmptyValue(paramMap)
+	if strings.EqualFold(method, "GET") {
+		keys := make([]string, 0)
+		for k := range validParamMap {
+			keys = append(keys, k)
+		}
+
+		sort.Strings(keys)
+
+		tmpList := make([]string, 0)
+		for i := range keys {
+			switch tmpValue := validParamMap[keys[i]]; tmpValue.(type) {
+			case string:
+				tmpList = append(tmpList, fmt.Sprintf("%s=%s", keys[i], tmpValue))
+				continue
+			case interface{}:
+				rs, err := json.Marshal(tmpValue)
+				if err != nil || rs == nil || string(rs) == "" {
+					continue
+				}
+				tmpList = append(tmpList, fmt.Sprintf("%s=%s", keys[i], string(rs)))
+				continue
+			}
+		}
+		return strings.Join(tmpList, "&"), nil
+
+	} else if strings.EqualFold(method, "POST") {
+		postResult, postErr := json.Marshal(validParamMap)
+		return string(postResult), postErr
+	} else {
+		return "", errors.New("Unknow Method: \"" + method + "\"")
+	}
+}
 
 func BaseResponse(ctx context.Context, url string, data interface{}, header ...http.Header) (map[string]interface{}, error) {
 	logger := logx.WithContext(ctx)
