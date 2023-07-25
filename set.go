@@ -1,6 +1,9 @@
 package utils
 
-import "reflect"
+import (
+	"github.com/spf13/cast"
+	"reflect"
+)
 
 func DiffSet(a []int64, b []int64) []int64 {
 	var diff []int64
@@ -40,4 +43,22 @@ func InArray(needle interface{}, haystack interface{}) bool {
 	}
 
 	return false
+}
+
+func SliceInt64ToString(ids []int64) []string {
+	var s []string
+	for _, id := range ids {
+		s = append(s, cast.ToString(id))
+	}
+
+	return s
+}
+
+func GetSliceFromMap(data map[int64]interface{}) []int64 {
+	var s []int64
+	for id, _ := range data {
+		s = append(s, id)
+	}
+
+	return s
 }
