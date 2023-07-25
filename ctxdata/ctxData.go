@@ -8,6 +8,7 @@ import (
 
 // CtxKeyJwtUserId get uid from ctx
 var CtxKeyJwtUserId = "jwtUserId"
+var CtxKeyJwtUserInfo = "jwtUserInfo"
 
 func GetUidFromCtx(ctx context.Context) int64 {
 	var uid int64
