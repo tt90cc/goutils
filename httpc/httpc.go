@@ -193,7 +193,7 @@ type CustomizeConfig struct {
 	Header http.Header
 }
 
-func CustomizePost(ctx context.Context, conf *CustomizeConfig, fn func(resp map[string]interface{}) interface{}) (interface{}, error) {
+func CustomizePost(ctx context.Context, conf *CustomizeConfig, fn func(resp map[string]interface{}) (interface{}, error)) (interface{}, error) {
 	logger := logx.WithContext(ctx)
 
 	h := make([]http.Header, 0)
@@ -206,10 +206,10 @@ func CustomizePost(ctx context.Context, conf *CustomizeConfig, fn func(resp map[
 		return nil, err
 	}
 
-	return fn(j), nil
+	return fn(j)
 }
 
-func CustomizeGet(ctx context.Context, conf *CustomizeConfig, fn func(resp map[string]interface{}) interface{}) (interface{}, error) {
+func CustomizeGet(ctx context.Context, conf *CustomizeConfig, fn func(resp map[string]interface{}) (interface{}, error)) (interface{}, error) {
 	logger := logx.WithContext(ctx)
 	r, err := http.NewRequest(http.MethodGet, conf.URL, nil)
 	if err != nil {
@@ -245,5 +245,5 @@ func CustomizeGet(ctx context.Context, conf *CustomizeConfig, fn func(resp map[s
 		return nil, err
 	}
 
-	return fn(j), nil
+	return fn(j)
 }
