@@ -186,3 +186,64 @@ func Get(ctx context.Context, url string, header ...http.Header) (interface{}, e
 
 	return j["data"], nil
 }
+
+type CustomizeConfig struct {
+	URL    string
+	Data   interface{}
+	Header http.Header
+}
+
+func CustomizePost(ctx context.Context, conf *CustomizeConfig, fn func(resp map[string]interface{}) interface{}) (interface{}, error) {
+	logger := logx.WithContext(ctx)
+
+	h := make([]http.Header, 0)
+	if conf.Header != nil {
+		h = append(h, conf.Header)
+	}
+	j, err := BaseResponse(ctx, conf.URL, conf.Data, h...)
+	if err != nil {
+		logger.Errorf("request failed. err:%v url:%s data:%+v j:%v", err, conf.URL, conf.Data, j)
+		return nil, err
+	}
+
+	return fn(j), nil
+}
+
+func CustomizeGet(ctx context.Context, conf *CustomizeConfig, fn func(resp map[string]interface{}) interface{}) (interface{}, error) {
+	logger := logx.WithContext(ctx)
+	r, err := http.NewRequest(http.MethodGet, conf.URL, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	for k, listStr := range conf.Header {
+		for _, s := range listStr {
+			r.Header.Set(k, s)
+		}
+	}
+
+	resp, err := httpc.DoRequest(r)
+	if err != nil {
+		logger.Errorf("request failed. err:%v", err)
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return nil, errors.New(resp.Status)
+	}
+
+	b, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var j map[string]interface{}
+	err = json.Unmarshal(b, &j)
+	if err != nil {
+		return nil, err
+	}
+
+	return fn(j), nil
+}
