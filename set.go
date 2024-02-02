@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"github.com/spf13/cast"
 	"reflect"
 )
@@ -61,4 +62,11 @@ func GetSliceFromMap(data map[int64]interface{}) []int64 {
 	}
 
 	return s
+}
+
+func StructToMap(u1 interface{}) map[string]interface{} {
+	b, _ := json.Marshal(&u1)
+	var m map[string]interface{}
+	_ = json.Unmarshal(b, &m)
+	return m
 }
