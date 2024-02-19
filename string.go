@@ -34,7 +34,7 @@ func Krand(size int, kind int) string {
 	return string(result)
 }
 
-func generateRandomString(length int) string {
+func GenerateRandomString(length int) string {
 	charset := "abcdefghijkmnpqrstuvwxyz123456789"
 	b := make([]byte, length)
 	for i := range b {
