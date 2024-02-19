@@ -34,6 +34,15 @@ func Krand(size int, kind int) string {
 	return string(result)
 }
 
+func generateRandomString(length int) string {
+	charset := "abcdefghijkmnpqrstuvwxyz123456789"
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[rand.Intn(len(charset))] // 从字符集中随机选取字符赋值到切片中
+	}
+	return string(b) // 将切片转换为字符串并返回
+}
+
 // 替换
 func InPlaceholders(n int) string {
 	var b strings.Builder
